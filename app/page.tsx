@@ -3,7 +3,7 @@ import { motion } from 'framer-motion'
 import Image from 'next/image'
 import { useState, useEffect, useRef } from 'react'
 import { useTheme } from 'next-themes'
-import { Search, ChevronUp, ChevronDown, Moon, Sun, Eye } from 'lucide-react'
+import { Search, ChevronUp, ChevronDown, Moon, Sun, Eye, Command } from 'lucide-react'
 import { Input } from "@/components/ui/input"
 import { Button } from "@/components/ui/button"
 import {
@@ -13,7 +13,6 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog"
-// import { Skeleton } from "@/components/ui/skeleton"
 
 type User = {
   id: number
@@ -140,14 +139,15 @@ export default function Dashboard() {
             <Input
               ref={searchInputRef}
               type="text"
-              placeholder="Search by name or username (Ctrl+K)"
+              placeholder="Search by name or username"
               className="pl-10 w-full bg-white dark:bg-[#111111] border-gray-200 dark:border-[#333333] focus:ring-red-500 dark:focus:ring-red-400 focus:border-red-500 dark:focus:border-red-400"
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
             />
             <div className="absolute right-3 top-1/2 transform -translate-y-1/2 text-sm text-gray-400 dark:text-gray-500">
-              <kbd className="hidden group-hover:inline-block px-2 py-1 bg-gray-100 dark:bg-[#191919] rounded border border-gray-200 dark:border-[#333333]">
-                Ctrl+K
+              <kbd className="px-2 py-1 bg-gray-100 dark:bg-[#191919] rounded border border-gray-200 dark:border-[#333333] flex items-center ">
+                <Command className="h-4 w-4" />
+                <span className="text-sm">+K</span>
               </kbd>
             </div>
           </div>
@@ -176,15 +176,12 @@ export default function Dashboard() {
           </Button>
         </div>
 
-        {loading ? (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {[...Array(6)].map((_, index) => (
-              <div key={index} className="bg-white dark:bg-[#111111] rounded-lg border border-gray-200 dark:border-[#333333] p-6">
-                {/* Skeleton loading */}
-              </div>
-            ))}
-          </div>
-        ) : (
+        <div className="relative">
+          {loading && (
+            <div className="absolute inset-0 flex items-center justify-center">
+              <div className="animate-spin rounded-full h-16 w-16 border-t-4 border-red-500 border-solid"></div>
+            </div>
+          )}
           <motion.div
             className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"
             variants={containerVariants}
@@ -237,29 +234,31 @@ export default function Dashboard() {
               </motion.div>
             ))}
           </motion.div>
-        )}
-
-        <div className="mt-8 flex justify-center">
-          <Button
-            onClick={() => setCurrentPage(prev => Math.max(prev - 1, 1))}
-            disabled={currentPage === 1}
-            className="mr-2 bg-white dark:bg-[#111111] border-gray-200 dark:border-[#333333] hover:bg-gray-100 dark:hover:bg-[#191919] disabled:hover:bg-white dark:disabled:hover:bg-[#111111]"
-            variant="outline"
-          >
-            Previous
-          </Button>
-          <span className="mx-4 flex items-center text-gray-600 dark:text-gray-400">
-            Page {currentPage} of {totalPages}
-          </span>
-          <Button
-            onClick={() => setCurrentPage(prev => Math.min(prev + 1, totalPages))}
-            disabled={currentPage === totalPages}
-            className="ml-2 bg-white dark:bg-[#111111] border-gray-200 dark:border-[#333333] hover:bg-gray-100 dark:hover:bg-[#191919] disabled:hover:bg-white dark:disabled:hover:bg-[#111111]"
-            variant="outline"
-          >
-            Next
-          </Button>
         </div>
+
+        {!loading && (
+          <div className="mt-8 flex justify-center">
+            <Button
+              onClick={() => setCurrentPage(prev => Math.max(prev - 1, 1))}
+              disabled={currentPage === 1}
+              className="mr-2 bg-white dark:bg-[#111111] border-gray-200 dark:border-[#333333] hover:bg-gray-100 dark:hover:bg-[#191919] disabled:hover:bg-white dark:disabled:hover:bg-[#111111]"
+              variant="outline"
+            >
+              Previous
+            </Button>
+            <span className="mx-4 flex items-center text-gray-600 dark:text-gray-400">
+              Page {currentPage} of {totalPages}
+            </span>
+            <Button
+              onClick={() => setCurrentPage(prev => Math.min(prev + 1, totalPages))}
+              disabled={currentPage === totalPages}
+              className="ml-2 bg-white dark:bg-[#111111] border-gray-200 dark:border-[#333333] hover:bg-gray-100 dark:hover:bg-[#191919] disabled:hover:bg-white dark:disabled:hover:bg-[#111111]"
+              variant="outline"
+            >
+              Next
+            </Button>
+          </div>
+        )}
       </main>
 
       <footer className="border-t border-gray-200 dark:border-[#333333] bg-white dark:bg-black mt-8">
